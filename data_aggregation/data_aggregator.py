@@ -1,8 +1,9 @@
 from pyspark.sql import SparkSession
 import polars as pl
+from .strategies.base_strategy import BaseStrategy
 
 class DataAggregator:
-    def __init__(self):
+    def __init__(self, strategy: BaseStrategy):
         # Initialize the Spark session
         self.spark = SparkSession.builder \
             .appName("Iceberg Data Aggregation") \
@@ -11,15 +12,17 @@ class DataAggregator:
             .config("spark.sql.catalog.my_catalog.warehouse", "path/to/warehouse") \
             .getOrCreate()
 
+        # Set the aggregation strategy
+        self.strategy = strategy
+
     def load_data(self, table_name):
         # Read data from the Iceberg table into a PySpark DataFrame
         spark_df = self.spark.read.format("iceberg").load(table_name)
         return spark_df
 
     def aggregate_data(self, spark_df):
-        # Example aggregation: Group by a column and calculate sum
-        aggregated_df = spark_df.groupBy("column_to_group").sum("column_to_sum")
-        return aggregated_df
+        # Use the aggregation strategy to process the data
+        return self.strategy.aggregate(spark_df)
 
     def convert_to_polars(self, spark_df):
         # Convert PySpark DataFrame to Pandas and then to Polars DataFrame

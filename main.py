@@ -1,9 +1,8 @@
-from data_ingestion.ingest_data import ingest_data
-from data_aggregation.aggregate_data import aggregate_data
+from use_cases import use_case_1, use_case_2
 
 if __name__ == "__main__":
-    # Step 1: Ingest data from APIs and store in Iceberg
-    ingest_data()
+    # Run Use Case 1
+    use_case_1.run_use_case()
 
-    # Step 2: Perform data aggregation
-    aggregate_data()
+    # Run Use Case 2
+    use_case_2.run_use_case()
