@@ -6,4 +6,4 @@ class AppendStrategy:
         Append data to the specified Iceberg table.
         """
         print(f"Appending data to Iceberg table {table_name}...")
-        spark_df.write.format("iceberg").mode("append").save(table_name)
+        spark_df.writeTo(table_name).append().createOrReplace()

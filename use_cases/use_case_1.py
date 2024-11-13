@@ -2,7 +2,7 @@
 
 from data_ingestion.api_client import ApiClient
 from data_ingestion.iceberg_storage import IcebergStorage
-from data_ingestion.injection_strategies import AppendStrategy
+from data_ingestion.injection_strategies import OverwriteStrategy
 from data_aggregation.data_aggregator import DataAggregator
 from data_aggregation.strategies import GroupSumStrategy
 
@@ -21,18 +21,14 @@ def run_use_case():
     pandas_df = pd.DataFrame(data)
     
     # Step 2: Store the data in Iceberg using Append Strategy
-    append_strategy = AppendStrategy()
+    append_strategy = OverwriteStrategy()
     iceberg_storage = IcebergStorage(injection_strategy=append_strategy)
     iceberg_storage.store(pandas_df, "my_catalog.use_case_1_table")
 
     # Step 3: Load the data from Iceberg
     loaded_data = iceberg_storage.load("my_catalog.use_case_1_table")
 
-    # Step 4: Aggregate data using Group Sum Strategy
-    group_sum_strategy = GroupSumStrategy(group_by_field="category", sum_field="value")
-    aggregator = DataAggregator(strategy=group_sum_strategy)
-    aggregated_data = aggregator.aggregate(loaded_data)
+    print(loaded_data.head())
 
-    # Display the aggregated data
-    print("Aggregated Data (Use Case 1):")
-    print(aggregated_data)
+  #need to dynamically group now, options to pass multiple df and column configurations 
+

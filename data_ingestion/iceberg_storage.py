@@ -33,7 +33,7 @@ class IcebergStorage:
         spark_df = self.spark.read.format("iceberg").load(table_name)
         
         # Convert the Spark DataFrame to Pandas and then to Polars DataFrame
-        return polars.from_pandas(spark_df.toPandas())
+        return spark_df.toPandas()
 
     def stop_spark(self):
         """
