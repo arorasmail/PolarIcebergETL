@@ -1,14 +1,13 @@
-from .api_client import ApiClient
-from .data_processor import DataProcessor
-from .iceberg_storage import IcebergStorage
+from api_client import ApiClient
+from data_processor import DataProcessor
+from iceberg_storage import IcebergStorage
 
 def ingest_data():
     # Initialize API clients for multiple APIs
     api_clients = [
-        ApiClient("https://api1.example.com"),
-        ApiClient("https://api2.example.com"),
-        ApiClient("https://api3.example.com"),
-        ApiClient("https://api4.example.com")
+        ApiClient("https://fake-json-api.mock.beeceptor.com/companies"),
+        ApiClient("https://dummy-json.mock.beeceptor.com/todos"),
+        ApiClient("https://dummy-json.mock.beeceptor.com/posts")
     ]
 
     # Initialize Iceberg storage
@@ -16,6 +15,7 @@ def ingest_data():
 
     for client in api_clients:
         # Fetch data from each API
+        print("running for client")
         raw_data = client.get_data("data_endpoint")
         # Process data using Polars
         processed_data = DataProcessor.process_data(raw_data)

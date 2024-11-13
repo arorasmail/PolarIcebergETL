@@ -9,7 +9,8 @@ class DataAggregator:
             .appName("Iceberg Data Aggregation") \
             .config("spark.sql.catalog.my_catalog", "org.apache.iceberg.spark.SparkCatalog") \
             .config("spark.sql.catalog.my_catalog.type", "hadoop") \
-            .config("spark.sql.catalog.my_catalog.warehouse", "path/to/warehouse") \
+            .config("spark.sql.catalog.my_catalog.warehouse", "/warehouse") \
+            .config("spark.jars.packages", "org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.2.0") \
             .getOrCreate()
 
         # Set the aggregation strategy

@@ -1,7 +1,9 @@
-from .base_injection_strategy import BaseInjectionStrategy
-from pyspark.sql import DataFrame
+# data_ingestion/injection_strategies.py
 
-class AppendStrategy(BaseInjectionStrategy):
-    def inject(self, spark_df: DataFrame, table_name: str):
-        # Append data to the existing Iceberg table
+class AppendStrategy:
+    def store(self, spark_df, table_name):
+        """
+        Append data to the specified Iceberg table.
+        """
+        print(f"Appending data to Iceberg table {table_name}...")
         spark_df.write.format("iceberg").mode("append").save(table_name)

@@ -1,7 +1,9 @@
-from .base_injection_strategy import BaseInjectionStrategy
-from pyspark.sql import DataFrame
+# data_ingestion/injection_strategies.py
 
-class OverwriteStrategy(BaseInjectionStrategy):
-    def inject(self, spark_df: DataFrame, table_name: str):
-        # Overwrite the existing Iceberg table
+class OverwriteStrategy:
+    def store(self, spark_df, table_name):
+        """
+        Overwrite data in the specified Iceberg table.
+        """
+        print(f"Overwriting data in Iceberg table {table_name}...")
         spark_df.write.format("iceberg").mode("overwrite").save(table_name)
