@@ -1,28 +1,38 @@
-from data_aggregation.data_aggregator import DataAggregator
-from data_aggregation.strategies.group_sum_strategy import GroupSumStrategy
+# use_cases/use_case_1.py
+
+from data_ingestion.api_client import ApiClient
 from data_ingestion.iceberg_storage import IcebergStorage
-from data_ingestion.injection_strategies.append_strategy import AppendStrategy
+from data_ingestion.injection_strategies import AppendStrategy
+from data_aggregation.data_aggregator import DataAggregator
+from data_aggregation.strategies import GroupSumStrategy
 
 def run_use_case():
-    # Define table for this use case
-    table_name = "my_catalog.use_case_1_table"
+    # Step 1: Fetch data from API
+    api_client = ApiClient("https://fake-json-api.mock.beeceptor.com")
+    data = api_client.get_data("companies")
 
-    # Initialize DataAggregator with the chosen aggregation strategy
-    aggregation_strategy = GroupSumStrategy()
-    aggregator = DataAggregator(aggregation_strategy)
+    print(data)
+    
+  # Convert the fetched data to a Polars DataFrame (assuming the data is in a proper format)
+    #import polars as pl
+    #polars_df = pl.DataFrame(data)
 
-    # Load data from Iceberg
-    spark_df = aggregator.load_data(table_name)
+    import pandas as pd
+    pandas_df = pd.DataFrame(data)
+    
+    # Step 2: Store the data in Iceberg using Append Strategy
+    append_strategy = AppendStrategy()
+    iceberg_storage = IcebergStorage(injection_strategy=append_strategy)
+    iceberg_storage.store(pandas_df, "my_catalog.use_case_1_table")
 
-    # Perform aggregation
-    aggregated_df = aggregator.aggregate_data(spark_df)
+    # Step 3: Load the data from Iceberg
+    loaded_data = iceberg_storage.load("my_catalog.use_case_1_table")
 
-    # Initialize Iceberg storage and injection strategy
-    injection_strategy = AppendStrategy()
-    iceberg_storage = IcebergStorage()
+    # Step 4: Aggregate data using Group Sum Strategy
+    group_sum_strategy = GroupSumStrategy(group_by_field="category", sum_field="value")
+    aggregator = DataAggregator(strategy=group_sum_strategy)
+    aggregated_data = aggregator.aggregate(loaded_data)
 
-    # Inject the aggregated data into Iceberg
-    injection_strategy.inject(aggregated_df, table_name)
-
-    # Stop the Spark session
-    aggregator.stop_spark()
+    # Display the aggregated data
+    print("Aggregated Data (Use Case 1):")
+    print(aggregated_data)

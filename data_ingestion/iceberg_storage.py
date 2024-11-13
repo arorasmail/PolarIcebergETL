@@ -10,7 +10,7 @@ class IcebergStorage:
         .config("spark.sql.catalog.my_catalog.type", "hadoop") \
         .config("spark.sql.catalog.my_catalog.warehouse", "file:///Users/admin/Documents/official/PolarIcebergETL/warehouse") \
         .config("saprk.sql.extensions","org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
-        .config("spark.sql.defaultCatalog", "local") \
+        .config("spark.jars.packages", "org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.2.0") \
         .getOrCreate()
 
         self.injection_strategy = injection_strategy  # Injection strategy for storing data
